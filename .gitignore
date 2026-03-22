@@ -1,0 +1,18 @@
+# Terraform files
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.tfstate.lock.info
+.terraform.lock.hcl
+
+# SSH Keys (CRITICAL)
+*.pem
+*.ppk
+
+# Python
+__pycache__/
+*.pyc
+
+# OS generated files
+.DS_Store
+Thumbs.db

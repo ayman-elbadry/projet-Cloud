@@ -1,0 +1,101 @@
+---
+- name: Setup Infrastructure and Prerequisites
+  hosts: kubernetes
+  become: yes
+  tasks:
+    - name: Update apt cache and upgrade system
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install essential packages
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Check if swap is already enabled
+      command: swapon --show
+      register: swap_info
+      changed_when: false
+
+    - name: Create 1GB Swap file
+      command: fallocate -l 1G /swapfile
+      when: swap_info.stdout == ""
+
+    - name: Set correct permissions on swapfile
+      file:
+        path: /swapfile
+        mode: '0600'
+      when: swap_info.stdout == ""
+
+    - name: Format swapfile
+      command: mkswap /swapfile
+      when: swap_info.stdout == ""
+
+    - name: Enable swapfile
+      command: swapon /swapfile
+      when: swap_info.stdout == ""
+
+    - name: Add swap to fstab to persist across reboots
+      mount:
+        name: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        passno: '0'
+        dump: '0'
+        state: present
+
+    - name: Install Docker
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Ensure Docker starts on boot
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+        
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+
+- name: Install and Configure K3s on Master Node
+  hosts: master
+  become: yes
+  tasks:
+    - name: Download and Install K3s script (Lightweight Kubernetes)
+      shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --write-kubeconfig-mode 644 --disable traefik --disable servicelb --disable metrics-server --kube-apiserver-arg=event-ttl=1h" sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Ensure k3s service is running and enabled
+      systemd:
+        name: k3s
+        state: started
+        enabled: true
+
+    - name: Wait for Kubernetes node to be ready
+      command: kubectl get nodes
+      register: nodes_output
+      until: "'Ready' in nodes_output.stdout"
+      retries: 5
+      delay: 10
+
+    # Note: K3s by default DOES NOT taint the master node (unlike kubeadm).
+    # Pods are already allowed to schedule on the master.
+    # We include this task to explicitly ensure it is untainted just in case.
+    - name: Ensure Master node is untainted (Allow pod deployment)
+      shell: kubectl taint nodes --all node-role.kubernetes.io/master- || true
+      ignore_errors: yes
