@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet DevOps & Cloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="clouds">
+        <img src="https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-cloud-11.png" style="--i:1; animation-duration: 25s;">
+        <img src="https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-cloud-11.png" style="--i:2; animation-duration: 35s;">
+        <img src="https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-cloud-11.png" style="--i:3; animation-duration: 20s;">
+    </div>
+    
+    <div class="container">
+        <div class="glass-card">
+            <div class="badge">
+                <span class="dot"></span> En Ligne · Déploiement CI/CD
+            </div>
+            <h1>Bienvenue dans le <span class="highlight">Cloud</span></h1>
+            <h2>Projet Cloud & DevOps</h2>
+            
+            <p class="description">
+                Cette interface est propulsée depuis un cluster <b>Kubernetes (K3s)</b> hébergé sur AWS. L'infrastructure a été entièrement provisionnée par <b>Terraform</b> et configurée par <b>Ansible</b>. <br><br>
+                Grâce au pipeline <b>GitHub Actions</b>, le cycle de vie du code (build Docker Hub & déploiement) est 100% automatisé, avec un temps d'arrêt minimal.
+            </p>
+
+            <div class="tech-stack">
+                <span class="tech tech-terraform">Terraform</span>
+                <span class="tech tech-ansible">Ansible</span>
+                <span class="tech tech-docker">Docker</span>
+                <span class="tech tech-k8s">Kubernetes</span>
+                <span class="tech tech-github">CI/CD Actions</span>
+                <span class="tech tech-aws">AWS EC2</span>
+                <span class="tech tech-flask">Flask</span>
+            </div>
+            
+            <div class="footer-note">
+                Conçu et déployé pour l'excellence DevOps.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
