@@ -56,5 +56,5 @@ jobs:
             # 2. Restart the deployment to pick up the new image
             sudo kubectl rollout restart deployment/flask-app
             
-            # 3. Verify rollout status
-            sudo kubectl rollout status deployment/flask-app
+            # 3. Verify rollout status with a timeout to avoid hanging forever
+            sudo kubectl rollout status deployment/flask-app --timeout=90s
