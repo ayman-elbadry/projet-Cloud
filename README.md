@@ -10,6 +10,8 @@ Les technologies clés utilisées sont :
 * **Kubernetes (K3s)** pour l'orchestration des conteneurs.
 * **GitHub Actions** pour le pipeline CI/CD.
 
+**Lien de l'application déployée :** [http://13.51.205.142:30001/](http://13.51.205.142:30001/)
+
 ---
 
 ## Étape 1 : Provisionnement de l'Infrastructure AWS (Terraform)
