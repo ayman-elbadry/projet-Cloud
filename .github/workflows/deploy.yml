@@ -55,4 +55,4 @@ jobs:
             sudo kubectl rollout restart deployment/flask-app
             
             # 2. Verify rollout status with a timeout to avoid hanging forever
-            sudo kubectl rollout status deployment/flask-app --timeout=90s
+            sudo kubectl rollout status deployment/flask-app --timeout=300s
