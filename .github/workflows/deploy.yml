@@ -36,6 +36,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     name: Deploy to K3s Master Node
@@ -49,12 +51,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 1. Force K3s containerd to pull the latest image from Docker Hub
-            sudo k3s crictl rmi docker.io/${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }} || true
-            sudo k3s ctr images pull docker.io/${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }}
-            
-            # 2. Restart the deployment to pick up the new image
+            # 1. Restart the deployment to pick up the new image
             sudo kubectl rollout restart deployment/flask-app
             
-            # 3. Verify rollout status with a timeout to avoid hanging forever
+            # 2. Verify rollout status with a timeout to avoid hanging forever
             sudo kubectl rollout status deployment/flask-app --timeout=90s
